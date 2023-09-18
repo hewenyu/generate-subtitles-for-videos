@@ -22,6 +22,7 @@
 
 import logging
 import gradio as gr
+from model import language_to_models
 
 title = "# Next-gen Kaldi: Generate subtitles for videos"
 
@@ -51,6 +52,14 @@ css = """
 """
 
 
+def update_model_dropdown(language: str):
+    if language in language_to_models:
+        choices = language_to_models[language]
+        return gr.Dropdown.update(choices=choices, value=choices[0])
+
+    raise ValueError(f"Unsupported language: {language}")
+
+
 def build_html_output(s: str, style: str = "result_item_success"):
     return f"""
     <div class='result'>
@@ -63,6 +72,7 @@ def build_html_output(s: str, style: str = "result_item_success"):
 
 def process_uploaded_file(
     language: str,
+    repo_id: str,
     in_filename: str,
 ):
     if in_filename is None or in_filename == "":
@@ -82,7 +92,7 @@ demo = gr.Blocks(css=css)
 
 with demo:
     gr.Markdown(title)
-    language_choices = ["English", "Chinese"]
+    language_choices = list(language_to_models.keys())
 
     language_radio = gr.Radio(
         label="Language",
@@ -90,12 +100,23 @@ with demo:
         value=language_choices[0],
     )
 
+    model_dropdown = gr.Dropdown(
+        choices=language_to_models[language_choices[0]],
+        label="Select a model",
+        value=language_to_models[language_choices[0]][0],
+    )
+
+    language_radio.change(
+        update_model_dropdown,
+        inputs=language_radio,
+        outputs=model_dropdown,
+    )
+
     with gr.Tabs():
         with gr.TabItem("Upload video from disk"):
             uploaded_file = gr.Video(
                 source="upload",
                 interactive=True,
-                type="filepath",
                 label="Upload from disk",
             )
             upload_button = gr.Button("Submit for recognition")
@@ -106,6 +127,7 @@ with demo:
             process_uploaded_file,
             inputs=[
                 language_radio,
+                model_dropdown,
                 uploaded_file,
             ],
             outputs=[uploaded_output, uploaded_html_info],
