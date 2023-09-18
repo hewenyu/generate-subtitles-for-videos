@@ -127,8 +127,6 @@ with demo:
         value=language_choices[0],
     )
 
-    logging.info(model_choices)
-
     model_dropdown = gr.Dropdown(
         choices=language_to_models[language_choices[0]],
         label="Select a model",
