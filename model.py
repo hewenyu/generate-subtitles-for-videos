@@ -192,7 +192,9 @@ def get_vad() -> sherpa_onnx.VoiceActivityDetector:
 
 @lru_cache(maxsize=10)
 def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
-    if repo_id in english_models:
+    if repo_id in chinese_models:
+        return chinese_models[repo_id](repo_id)
+    elif repo_id in english_models:
         return english_models[repo_id](repo_id)
     elif repo_id in chinese_english_mixed_models:
         return chinese_english_mixed_models[repo_id](repo_id)
@@ -201,6 +203,49 @@ def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     else:
         raise ValueError(f"Unsupported repo_id: {repo_id}")
 
+
+def _get_wenetspeech_pre_trained_model(repo_id):
+    assert repo_id in (
+        "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23",
+    ), repo_id
+
+    encoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="encoder-epoch-99-avg-1.onnx",
+        subfolder=".",
+    )
+
+    decoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="decoder-epoch-99-avg-1.onnx",
+        subfolder=".",
+    )
+
+    joiner_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="joiner-epoch-99-avg-1.onnx",
+        subfolder=".",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder=".")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+        tokens=tokens,
+        encoder=encoder_model,
+        decoder=decoder_model,
+        joiner=joiner_model,
+        num_threads=2,
+        sample_rate=16000,
+        feature_dim=80,
+        decoding_method="greedy_search",
+    )
+
+    return recognizer
+
+
+chinese_models = {
+    "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23": _get_wenetspeech_pre_trained_model,  # noqa
+}
 
 english_models = {
     "whisper-tiny.en": _get_whisper_model,
@@ -218,6 +263,7 @@ russian_models = {
 }
 
 language_to_models = {
+    "Chinese": list(chinese_models),
     "English": list(english_models.keys()),
     "Chinese+English": list(chinese_english_mixed_models.keys()),
     "Russian": list(russian_models.keys()),
