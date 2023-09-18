@@ -35,6 +35,9 @@ def _get_nn_model_filename(
     return nn_model_filename
 
 
+get_file = _get_nn_model_filename
+
+
 def _get_bpe_model_filename(
     repo_id: str,
     filename: str = "bpe.model",

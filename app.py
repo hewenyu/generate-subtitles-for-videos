@@ -27,7 +27,7 @@ from pathlib import Path
 import gradio as gr
 
 from decode import decode
-from model import get_pretrained_model, get_vad, language_to_models
+from model import get_pretrained_model, get_vad, language_to_models, get_file
 
 title = "# Next-gen Kaldi: Generate subtitles for videos"
 
@@ -55,6 +55,19 @@ css = """
 .result_item_success {background-color:mediumaquamarine;color:white;align-self:start}
 .result_item_error {background-color:#ff7070;color:white;align-self:start}
 """
+
+examples = [
+    "President-Obama-on-the-Importance-of-Education.mp4",
+]
+
+for name in examples:
+    filename = get_file(
+        "csukuangfj/vad",
+        name,
+        subfolder=".",
+    )
+
+    shutil.copyfile(filename, name)
 
 
 def update_model_dropdown(language: str):
@@ -106,8 +119,8 @@ def process_uploaded_file(
     return (
         (in_filename, srt_filename),
         srt_filename,
-        result,
         build_html_output("Done! Please download the SRT file", "result_item_success"),
+        result,
     )
 
 
@@ -146,6 +159,28 @@ with demo:
             )
             upload_button = gr.Button("Submit for recognition")
 
+            output_video = gr.Video(label="Output")
+            output_srt_file = gr.File(label="Generated subtitles", show_label=True)
+
+            output_info = gr.HTML(label="Info")
+            output_textbox = gr.Textbox(label="Recognized speech from uploaded file")
+
+            gr.Examples(
+                examples=examples,
+                inputs=[
+                    language_radio,
+                    model_dropdown,
+                    uploaded_file,
+                ],
+                outputs=[
+                    output_video,
+                    output_srt_file,
+                    output_info,
+                    output_textbox,
+                ],
+                fn=process_uploaded_file,
+            )
+
         upload_button.click(
             process_uploaded_file,
             inputs=[
@@ -154,10 +189,10 @@ with demo:
                 uploaded_file,
             ],
             outputs=[
-                gr.Video(label="Output"),
-                gr.File(label="Generated subtitles", show_label=True),
-                gr.Textbox(label="Recognized speech from uploaded file"),
-                gr.HTML(label="Info"),
+                output_video,
+                output_srt_file,
+                output_info,
+                output_textbox,
             ],
         )
 
