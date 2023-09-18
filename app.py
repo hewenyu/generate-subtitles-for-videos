@@ -59,43 +59,6 @@ css = """
 .result_item_error {background-color:#ff7070;color:white;align-self:start}
 """
 
-examples = [
-    [
-        "Chinese+English",
-        "csukuangfj/sherpa-onnx-paraformer-zh-2023-03-28",
-        "midc2020-cui-bao-qiu.mp4",
-    ],
-    [
-        "English",
-        "whisper-tiny.en",
-        "midc2020-daniel-povey.mp4",
-    ],
-    [
-        "English",
-        "whisper-tiny.en",
-        "President-Obama-on-the-Importance-of-Education.mp4",
-    ],
-    [
-        "English",
-        "whisper-tiny.en",
-        "jobs-at-stanford.mp4",
-    ],
-    [
-        "English",
-        "yfyeung/icefall-asr-multidataset-pruned_transducer_stateless7-2023-05-04",
-        "obama's-message-for-america's-students.mp4",
-    ],
-]
-
-for _, _, name in examples:
-    filename = get_file(
-        "csukuangfj/vad",
-        name,
-        subfolder=".",
-    )
-
-    shutil.copyfile(filename, name)
-
 
 def update_model_dropdown(language: str):
     if language in language_to_models:
@@ -164,14 +127,10 @@ with demo:
         value=language_choices[0],
     )
 
-    model_choices = []
-    for models in language_to_models.values():
-        model_choices.extend(models)
-
     logging.info(model_choices)
 
     model_dropdown = gr.Dropdown(
-        choices=model_choices,
+        choices=language_to_models[language_choices[0]],
         label="Select a model",
         value=language_to_models[language_choices[0]][0],
     )
@@ -197,22 +156,6 @@ with demo:
 
             output_info = gr.HTML(label="Info")
             output_textbox = gr.Textbox(label="Recognized speech from uploaded file")
-
-            gr.Examples(
-                examples=examples,
-                inputs=[
-                    language_radio,
-                    model_dropdown,
-                    uploaded_file,
-                ],
-                outputs=[
-                    output_video,
-                    output_srt_file,
-                    output_info,
-                    output_textbox,
-                ],
-                fn=process_uploaded_file,
-            )
 
         upload_button.click(
             process_uploaded_file,
