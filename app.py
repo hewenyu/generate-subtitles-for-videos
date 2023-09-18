@@ -58,6 +58,16 @@ css = """
 
 examples = [
     [
+        "Chinese+English",
+        "csukuangfj/sherpa-onnx-paraformer-zh-2023-03-28",
+        "midc2020-cui-bao-qiu.mp4",
+    ],
+    [
+        "English",
+        "whisper-tiny.en",
+        "midc2020-daniel-povey.mp4",
+    ],
+    [
         "English",
         "whisper-tiny.en",
         "President-Obama-on-the-Importance-of-Education.mp4",
