@@ -304,8 +304,8 @@ russian_models = {
 }
 
 language_to_models = {
+    "Chinese+English": list(chinese_english_mixed_models.keys()),
     "Chinese": list(chinese_models.keys()),
     "English": list(english_models.keys()),
-    "Chinese+English": list(chinese_english_mixed_models.keys()),
     "Russian": list(russian_models.keys()),
 }

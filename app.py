@@ -36,6 +36,9 @@ This space shows how to generate subtitles/captions with Next-gen Kaldi.
 
 It is running on CPU within a docker container provided by Hugging Face.
 
+Please find test video files at
+<https://huggingface.co/csukuangfj/vad/tree/main>
+
 See more information by visiting the following links:
 
 - <https://github.com/k2-fsa/sherpa-onnx>
