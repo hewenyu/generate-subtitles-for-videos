@@ -21,8 +21,12 @@
 
 
 import logging
+import os
+
 import gradio as gr
-from model import language_to_models
+
+from decode import decode
+from model import get_pretrained_model, get_vad, language_to_models
 
 title = "# Next-gen Kaldi: Generate subtitles for videos"
 
@@ -70,6 +74,11 @@ def build_html_output(s: str, style: str = "result_item_success"):
     """
 
 
+def show_file_info(in_filename: str):
+    logging.info(f"Input file: {in_filename}")
+    _ = os.system(f"ffprob -hide_banner -i '{in_filename}'")
+
+
 def process_uploaded_file(
     language: str,
     repo_id: str,
@@ -84,7 +93,12 @@ def process_uploaded_file(
 
     logging.info(f"Processing uploaded file: {in_filename}")
 
-    return "Done", build_html_output("ok", "result_item_success")
+    recognizer = get_pretrained_model(repo_id)
+    vad = get_vad()
+
+    result = decode(recognizer, vad, in_filename)
+
+    return result, build_html_output("ok", "result_item_success")
 
 
 demo = gr.Blocks(css=css)
@@ -118,6 +132,7 @@ with demo:
                 source="upload",
                 interactive=True,
                 label="Upload from disk",
+                show_share_button=True,
             )
             upload_button = gr.Button("Submit for recognition")
             uploaded_output = gr.Textbox(label="Recognized speech from uploaded file")

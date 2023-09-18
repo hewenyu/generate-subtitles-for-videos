@@ -165,6 +165,40 @@ def _get_russian_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognize
     return recognizer
 
 
+@lru_cache(maxsize=2)
+def get_vad() -> sherpa_onnx.VoiceActivityDetector:
+    vad_model = _get_nn_model_filename(
+        repo_id="csukuangfj/vad",
+        filename="silero_vad.onnx",
+        subfolder=".",
+    )
+
+    config = sherpa_onnx.VadModelConfig()
+    config.silero_vad.model = vad_model
+    config.silero_vad.min_silence_duration = 0.15
+    config.silero_vad.min_speech_duration = 0.25
+    config.sample_rate = sample_rate
+
+    vad = sherpa_onnx.VoiceActivityDetector(
+        config,
+        buffer_size_in_seconds=180,
+    )
+
+    return vad
+
+
+@lru_cache(maxsize=10)
+def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
+    if repo_id in english_models:
+        return english_models[repo_id](repo_id)
+    elif repo_id in chinese_english_mixed_models:
+        return chinese_english_mixed_models[repo_id](repo_id)
+    elif repo_id in russian_models:
+        return russian_models[repo_id](repo_id)
+    else:
+        raise ValueError(f"Unsupported repo_id: {repo_id}")
+
+
 english_models = {
     "whisper-tiny.en": _get_whisper_model,
     "whisper-base.en": _get_whisper_model,
