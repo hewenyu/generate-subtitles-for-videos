@@ -22,6 +22,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 import gradio as gr
 
@@ -98,7 +99,16 @@ def process_uploaded_file(
 
     result = decode(recognizer, vad, in_filename)
 
-    return result, build_html_output("ok", "result_item_success")
+    srt_filename = Path(in_filename).with_suffix(".srt")
+    with open(srt_filename, "w", encoding="utf-8") as f:
+        f.write(result)
+
+    return (
+        (in_filename, srt_filename),
+        srt_filename,
+        result,
+        build_html_output("Done! Please download the SRT file", "result_item_success"),
+    )
 
 
 demo = gr.Blocks(css=css)
@@ -135,6 +145,7 @@ with demo:
                 show_share_button=True,
             )
             upload_button = gr.Button("Submit for recognition")
+            video_output_for_upload = gr.Video(label="Output")
             uploaded_output = gr.Textbox(label="Recognized speech from uploaded file")
             uploaded_html_info = gr.HTML(label="Info")
 
@@ -145,7 +156,12 @@ with demo:
                 model_dropdown,
                 uploaded_file,
             ],
-            outputs=[uploaded_output, uploaded_html_info],
+            outputs=[
+                gr.Video(label="Output"),
+                gr.File(label="Generated subtitles", show_label=True),
+                uploaded_output,
+                uploaded_html_info,
+            ],
         )
 
     gr.Markdown(description)
