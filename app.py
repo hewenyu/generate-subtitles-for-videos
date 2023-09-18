@@ -59,10 +59,10 @@ css = """
 examples = [
     [
         "English",
-        "csukuangfj/whisper-tiny.en",
+        "whisper-tiny.en",
         "President-Obama-on-the-Importance-of-Education.mp4",
     ],
-    ["English", "csukuangfj/whisper-tiny.en", "jobs-at-stanford.mp4"],
+    ["English", "whisper-tiny.en", "jobs-at-stanford.mp4"],
 ]
 
 for _, _, name in examples:
