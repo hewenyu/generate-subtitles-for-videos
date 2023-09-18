@@ -19,7 +19,7 @@
 # References:
 # https://gradio.app/docs/#dropdown
 
-
+import shutil
 import logging
 import os
 from pathlib import Path
@@ -57,10 +57,15 @@ css = """
 """
 
 examples = [
-    "President-Obama-on-the-Importance-of-Education.mp4",
+    [
+        "English",
+        "whisper-tiny.en",
+        "President-Obama-on-the-Importance-of-Education.mp4",
+    ],
+    ["English", "whisper-tiny.en", "jobs-at-stanford.mp4"],
 ]
 
-for name in examples:
+for _, name, _ in examples:
     filename = get_file(
         "csukuangfj/vad",
         name,
