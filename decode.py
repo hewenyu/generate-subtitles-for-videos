@@ -111,7 +111,7 @@ def decode(
 
         recognizer.decode_streams(streams)
         for seg, stream in zip(segments, streams):
-            seg.text = stream.result.text
+            seg.text = stream.result.text.strip()
             segment_list.append(seg)
 
     return "\n\n".join(f"{i}\n{seg} " for i, seg in enumerate(segment_list, 1))
