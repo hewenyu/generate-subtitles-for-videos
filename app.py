@@ -59,13 +59,13 @@ css = """
 examples = [
     [
         "English",
-        "whisper-tiny.en",
+        "csukuangfj/whisper-tiny.en",
         "President-Obama-on-the-Importance-of-Education.mp4",
     ],
-    ["English", "whisper-tiny.en", "jobs-at-stanford.mp4"],
+    ["English", "csukuangfj/whisper-tiny.en", "jobs-at-stanford.mp4"],
 ]
 
-for _, name, _ in examples:
+for _, _, name in examples:
     filename = get_file(
         "csukuangfj/vad",
         name,
