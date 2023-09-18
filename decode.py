@@ -36,9 +36,9 @@ class Segment:
         return self.start + self.duration
 
     def __str__(self):
-        s = f"{timedelta(seconds=self.start)}"[:-3]
+        s = f"0{timedelta(seconds=self.start)}"[:-3]
         s += " --> "
-        s += f"{timedelta(seconds=self.end)}"[:-3]
+        s += f"0{timedelta(seconds=self.end)}"[:-3]
         s = s.replace(".", ",")
         s += "\n"
         s += self.text
@@ -114,4 +114,4 @@ def decode(
             seg.text = stream.result.text.strip()
             segment_list.append(seg)
 
-    return "\n\n".join(f"{i}\n{seg} " for i, seg in enumerate(segment_list, 1))
+    return "\n\n".join(f"{i}\n{seg}" for i, seg in enumerate(segment_list, 1))
