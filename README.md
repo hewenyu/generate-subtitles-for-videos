@@ -1,10 +1,11 @@
 ---
-title: Generate Subtitles For Videos
-emoji: 📚
-colorFrom: indigo
-colorTo: indigo
+title: Generate subtitles
+emoji: 🌖
+colorFrom: yellow
+colorTo: green
 sdk: gradio
-sdk_version: 3.44.3
+python_version: 3.8.9
+sdk_version: 3.0.26
 app_file: app.py
 pinned: false
 license: apache-2.0
