@@ -243,6 +243,46 @@ def _get_wenetspeech_pre_trained_model(repo_id):
     return recognizer
 
 
+def _get_english_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
+    assert (
+        repo_id
+        == "yfyeung/icefall-asr-multidataset-pruned_transducer_stateless7-2023-05-04"
+    ), repo_id
+
+    encoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="encoder-epoch-30-avg-4.onnx",
+        subfolder="exp",
+    )
+
+    decoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="decoder-epoch-30-avg-4.onnx",
+        subfolder="exp",
+    )
+
+    joiner_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="joiner-epoch-30-avg-4.onnx",
+        subfolder="exp",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder="lang_bpe_500")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+        tokens=tokens,
+        encoder=encoder_model,
+        decoder=decoder_model,
+        joiner=joiner_model,
+        num_threads=2,
+        sample_rate=16000,
+        feature_dim=80,
+        decoding_method="greedy_search",
+    )
+
+    return recognizer
+
+
 chinese_models = {
     "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23": _get_wenetspeech_pre_trained_model,  # noqa
 }
@@ -251,6 +291,7 @@ english_models = {
     "whisper-tiny.en": _get_whisper_model,
     "whisper-base.en": _get_whisper_model,
     "whisper-small.en": _get_whisper_model,
+    "yfyeung/icefall-asr-multidataset-pruned_transducer_stateless7-2023-05-04": _get_english_model,  # noqa
 }
 
 chinese_english_mixed_models = {

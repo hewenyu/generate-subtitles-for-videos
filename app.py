@@ -62,7 +62,16 @@ examples = [
         "whisper-tiny.en",
         "President-Obama-on-the-Importance-of-Education.mp4",
     ],
-    ["English", "whisper-tiny.en", "jobs-at-stanford.mp4"],
+    [
+        "English",
+        "whisper-tiny.en",
+        "jobs-at-stanford.mp4",
+    ],
+    [
+        "English",
+        "yfyeung/icefall-asr-multidataset-pruned_transducer_stateless7-2023-05-04",
+        "obama's-message-for-america's-students.mp4",
+    ],
 ]
 
 for _, _, name in examples:
