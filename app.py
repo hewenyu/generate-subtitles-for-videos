@@ -145,7 +145,6 @@ with demo:
                 show_share_button=True,
             )
             upload_button = gr.Button("Submit for recognition")
-            video_output_for_upload = gr.Video(label="Output")
             uploaded_output = gr.Textbox(label="Recognized speech from uploaded file")
             uploaded_html_info = gr.HTML(label="Info")
 
