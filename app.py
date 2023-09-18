@@ -145,8 +145,6 @@ with demo:
                 show_share_button=True,
             )
             upload_button = gr.Button("Submit for recognition")
-            uploaded_output = gr.Textbox(label="Recognized speech from uploaded file")
-            uploaded_html_info = gr.HTML(label="Info")
 
         upload_button.click(
             process_uploaded_file,
@@ -158,8 +156,8 @@ with demo:
             outputs=[
                 gr.Video(label="Output"),
                 gr.File(label="Generated subtitles", show_label=True),
-                uploaded_output,
-                uploaded_html_info,
+                gr.Textbox(label="Recognized speech from uploaded file"),
+                gr.HTML(label="Info"),
             ],
         )
 
