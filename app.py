@@ -164,8 +164,14 @@ with demo:
         value=language_choices[0],
     )
 
+    model_choices = []
+    for models in language_to_models.values():
+        model_choices.extend(models)
+
+    logging.info(model_choices)
+
     model_dropdown = gr.Dropdown(
-        choices=language_to_models[language_choices[0]],
+        choices=model_choices,
         label="Select a model",
         value=language_to_models[language_choices[0]][0],
     )
