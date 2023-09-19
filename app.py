@@ -101,10 +101,13 @@ def process_uploaded_file(
     vad = get_vad()
 
     result = decode(recognizer, vad, in_filename)
+    logging.info(result)
 
     srt_filename = Path(in_filename).with_suffix(".srt")
     with open(srt_filename, "w", encoding="utf-8") as f:
         f.write(result)
+
+    logging.info("Done")
 
     return (
         (in_filename, srt_filename),
