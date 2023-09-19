@@ -243,6 +243,43 @@ def _get_wenetspeech_pre_trained_model(repo_id):
     return recognizer
 
 
+def _get_multi_zh_hans_pre_trained_model(repo_id):
+    assert repo_id in ("zrjin/sherpa-onnx-zipformer-multi-zh-hans-2023-9-2",), repo_id
+
+    encoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="encoder-epoch-20-avg-1.onnx",
+        subfolder=".",
+    )
+
+    decoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="decoder-epoch-20-avg-1.onnx",
+        subfolder=".",
+    )
+
+    joiner_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="joiner-epoch-20-avg-1.onnx",
+        subfolder=".",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder=".")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+        tokens=tokens,
+        encoder=encoder_model,
+        decoder=decoder_model,
+        joiner=joiner_model,
+        num_threads=2,
+        sample_rate=16000,
+        feature_dim=80,
+        decoding_method="greedy_search",
+    )
+
+    return recognizer
+
+
 def _get_english_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     assert (
         repo_id
@@ -285,6 +322,7 @@ def _get_english_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
 
 chinese_models = {
     "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23": _get_wenetspeech_pre_trained_model,  # noqa
+    "zrjin/sherpa-onnx-zipformer-multi-zh-hans-2023-9-2": _get_multi_zh_hans_pre_trained_model,  # noqa
 }
 
 english_models = {
