@@ -96,6 +96,7 @@ def process_uploaded_file(
         )
 
     logging.info(f"Processing uploaded file: {in_filename}")
+    show_file_info(in_filename)
 
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
