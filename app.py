@@ -80,7 +80,7 @@ def build_html_output(s: str, style: str = "result_item_success"):
 
 def show_file_info(in_filename: str):
     logging.info(f"Input file: {in_filename}")
-    _ = os.system(f"ffprob -hide_banner -i '{in_filename}'")
+    _ = os.system(f"ffprobe -hide_banner -i '{in_filename}'")
 
 
 def process_uploaded_file(
