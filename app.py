@@ -176,7 +176,7 @@ with demo:
             )
             upload_audio_button = gr.Button("Submit for recognition")
 
-            output_audio = gr.Video(label="Output")
+            output_audio = gr.Audio(label="Output")
             output_srt_file_audio = gr.File(
                 label="Generated subtitles", show_label=True
             )
