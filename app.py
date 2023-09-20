@@ -19,7 +19,6 @@
 # References:
 # https://gradio.app/docs/#dropdown
 
-import shutil
 import logging
 import os
 from pathlib import Path
@@ -27,7 +26,7 @@ from pathlib import Path
 import gradio as gr
 
 from decode import decode
-from model import get_pretrained_model, get_vad, language_to_models, get_file
+from model import get_pretrained_model, get_vad, language_to_models
 
 title = "# Next-gen Kaldi: Generate subtitles for videos"
 
@@ -219,7 +218,7 @@ with demo:
         )
 
         upload_audio_button.click(
-            process_uploaded_file,
+            process_uploaded_audio_file,
             inputs=[
                 language_radio,
                 model_dropdown,
