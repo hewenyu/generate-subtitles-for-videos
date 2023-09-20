@@ -83,7 +83,26 @@ def show_file_info(in_filename: str):
     _ = os.system(f"ffprobe -hide_banner -i '{in_filename}'")
 
 
-def process_uploaded_file(
+def process_uploaded_video_file(
+    language: str,
+    repo_id: str,
+    in_filename: str,
+):
+    if in_filename is None or in_filename == "":
+        return "", build_html_output(
+            "Please first upload a file and then click "
+            'the button "submit for recognition"',
+            "result_item_error",
+        )
+
+    logging.info(f"Processing uploaded file: {in_filename}")
+    show_file_info(in_filename)
+
+    ans = process(language, repo_id, in_filename)
+    return (in_filename, ans[0]), ans[0], ans[1], ans[2]
+
+
+def process_uploaded_audio_file(
     language: str,
     repo_id: str,
     in_filename: str,
@@ -115,7 +134,6 @@ def process(language: str, repo_id: str, in_filename: str):
     logging.info("Done")
 
     return (
-        (in_filename, srt_filename),
         srt_filename,
         build_html_output("Done! Please download the SRT file", "result_item_success"),
         result,
@@ -176,7 +194,6 @@ with demo:
             )
             upload_audio_button = gr.Button("Submit for recognition")
 
-            output_audio = gr.Audio(label="Output")
             output_srt_file_audio = gr.File(
                 label="Generated subtitles", show_label=True
             )
@@ -187,7 +204,7 @@ with demo:
             )
 
         upload_video_button.click(
-            process_uploaded_file,
+            process_uploaded_video_file,
             inputs=[
                 language_radio,
                 model_dropdown,
@@ -209,7 +226,6 @@ with demo:
                 uploaded_audio_file,
             ],
             outputs=[
-                output_audio,
                 output_srt_file_audio,
                 output_info_audio,
                 output_textbox_audio,
