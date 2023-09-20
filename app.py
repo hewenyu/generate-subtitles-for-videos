@@ -95,7 +95,6 @@ def process_uploaded_video_file(
         )
 
     logging.info(f"Processing uploaded file: {in_filename}")
-    show_file_info(in_filename)
 
     ans = process(language, repo_id, in_filename)
     return (in_filename, ans[0]), ans[0], ans[1], ans[2]
@@ -114,7 +113,6 @@ def process_uploaded_audio_file(
         )
 
     logging.info(f"Processing uploaded file: {in_filename}")
-    show_file_info(in_filename)
 
     return process(language, repo_id, in_filename)
 
@@ -130,6 +128,7 @@ def process(language: str, repo_id: str, in_filename: str):
     with open(srt_filename, "w", encoding="utf-8") as f:
         f.write(result)
 
+    show_file_info(in_filename)
     logging.info("Done")
 
     return (
