@@ -98,6 +98,10 @@ def process_uploaded_file(
     logging.info(f"Processing uploaded file: {in_filename}")
     show_file_info(in_filename)
 
+    return process(language, repo_id, in_filename)
+
+
+def process(language: str, repo_id: str, in_filename: str):
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
 
@@ -145,32 +149,70 @@ with demo:
 
     with gr.Tabs():
         with gr.TabItem("Upload video from disk"):
-            uploaded_file = gr.Video(
+            uploaded_video_file = gr.Video(
                 source="upload",
                 interactive=True,
                 label="Upload from disk",
                 show_share_button=True,
             )
-            upload_button = gr.Button("Submit for recognition")
+            upload_video_button = gr.Button("Submit for recognition")
 
             output_video = gr.Video(label="Output")
-            output_srt_file = gr.File(label="Generated subtitles", show_label=True)
+            output_srt_file_video = gr.File(
+                label="Generated subtitles", show_label=True
+            )
 
-            output_info = gr.HTML(label="Info")
-            output_textbox = gr.Textbox(label="Recognized speech from uploaded file")
+            output_info_video = gr.HTML(label="Info")
+            output_textbox_video = gr.Textbox(
+                label="Recognized speech from uploaded video file"
+            )
 
-        upload_button.click(
+        with gr.TabItem("Upload audio from disk"):
+            uploaded_audio_file = gr.Audio(
+                source="upload",  # Choose between "microphone", "upload"
+                type="filepath",
+                optional=False,
+                label="Upload audio from disk",
+            )
+            upload_audio_button = gr.Button("Submit for recognition")
+
+            output_audio = gr.Video(label="Output")
+            output_srt_file_audio = gr.File(
+                label="Generated subtitles", show_label=True
+            )
+
+            output_info_audio = gr.HTML(label="Info")
+            output_textbox_audio = gr.Textbox(
+                label="Recognized speech from uploaded audio file"
+            )
+
+        upload_video_button.click(
             process_uploaded_file,
             inputs=[
                 language_radio,
                 model_dropdown,
-                uploaded_file,
+                uploaded_video_file,
             ],
             outputs=[
                 output_video,
-                output_srt_file,
-                output_info,
-                output_textbox,
+                output_srt_file_video,
+                output_info_video,
+                output_textbox_video,
+            ],
+        )
+
+        upload_audio_button.click(
+            process_uploaded_file,
+            inputs=[
+                language_radio,
+                model_dropdown,
+                uploaded_audio_file,
+            ],
+            outputs=[
+                output_audio,
+                output_srt_file_audio,
+                output_info_audio,
+                output_textbox_audio,
             ],
         )
 

@@ -321,6 +321,7 @@ def _get_english_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
 
 
 chinese_models = {
+    "csukuangfj/sherpa-onnx-paraformer-zh-2023-03-28": _get_paraformer_zh_pre_trained_model,
     "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23": _get_wenetspeech_pre_trained_model,  # noqa
     "zrjin/sherpa-onnx-zipformer-multi-zh-hans-2023-9-2": _get_multi_zh_hans_pre_trained_model,  # noqa
 }
