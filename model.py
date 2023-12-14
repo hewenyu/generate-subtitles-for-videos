@@ -71,13 +71,13 @@ def _get_whisper_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     full_repo_id = "csukuangfj/sherpa-onnx-whisper-" + name
     encoder = _get_nn_model_filename(
         repo_id=full_repo_id,
-        filename=f"{name}-encoder.int8.ort",
+        filename=f"{name}-encoder.int8.onnx",
         subfolder=".",
     )
 
     decoder = _get_nn_model_filename(
         repo_id=full_repo_id,
-        filename=f"{name}-decoder.int8.ort",
+        filename=f"{name}-decoder.int8.onnx",
         subfolder=".",
     )
 
@@ -330,6 +330,9 @@ english_models = {
     "whisper-tiny.en": _get_whisper_model,
     "whisper-base.en": _get_whisper_model,
     "whisper-small.en": _get_whisper_model,
+    "whisper-distil-small.en": _get_whisper_model,
+    "whisper-medium.en": _get_whisper_model,
+    "whisper-distil-medium.en": _get_whisper_model,
     "yfyeung/icefall-asr-multidataset-pruned_transducer_stateless7-2023-05-04": _get_english_model,  # noqa
 }
 
