@@ -109,7 +109,9 @@ def decode(
 
             vad.pop()
 
-        recognizer.decode_streams(streams)
+        for s in streams:
+            recognizer.decode_stream(s)
+
         for seg, stream in zip(segments, streams):
             seg.text = stream.result.text.strip()
             segment_list.append(seg)
