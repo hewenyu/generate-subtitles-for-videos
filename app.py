@@ -62,7 +62,11 @@ css = """
 def update_model_dropdown(language: str):
     if language in language_to_models:
         choices = language_to_models[language]
-        return gr.Dropdown.update(choices=choices, value=choices[0])
+        return gr.Dropdown(
+            choices=choices,
+            value=choices[0],
+            interactive=True,
+        )
 
     raise ValueError(f"Unsupported language: {language}")
 
@@ -166,8 +170,7 @@ with demo:
     with gr.Tabs():
         with gr.TabItem("Upload video from disk"):
             uploaded_video_file = gr.Video(
-                source="upload",
-                interactive=True,
+                sources=["upload"],
                 label="Upload from disk",
                 show_share_button=True,
             )
