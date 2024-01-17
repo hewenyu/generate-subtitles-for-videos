@@ -146,7 +146,7 @@ def process(language: str, repo_id: str, in_filename: str):
     logging.info("Done")
 
     return (
-        srt_filename,
+        str(srt_filename),
         build_html_output("Done! Please download the SRT file", "result_item_success"),
         result,
     )
