@@ -185,9 +185,8 @@ with demo:
 
         with gr.TabItem("Upload audio from disk"):
             uploaded_audio_file = gr.Audio(
-                source="upload",  # Choose between "microphone", "upload"
+                sources=["upload"],  # Choose between "microphone", "upload"
                 type="filepath",
-                optional=False,
                 label="Upload audio from disk",
             )
             upload_audio_button = gr.Button("Submit for recognition")
