@@ -92,10 +92,15 @@ def process_uploaded_video_file(
     in_filename: str,
 ):
     if in_filename is None or in_filename == "":
-        return "", build_html_output(
-            "Please first upload a file and then click "
-            'the button "submit for recognition"',
-            "result_item_error",
+        return (
+            "",
+            build_html_output(
+                "Please first upload a file and then click "
+                'the button "submit for recognition"',
+                "result_item_error",
+            ),
+            "",
+            "",
         )
 
     logging.info(f"Processing uploaded file: {in_filename}")
@@ -110,10 +115,15 @@ def process_uploaded_audio_file(
     in_filename: str,
 ):
     if in_filename is None or in_filename == "":
-        return "", build_html_output(
-            "Please first upload a file and then click "
-            'the button "submit for recognition"',
-            "result_item_error",
+        return (
+            "",
+            build_html_output(
+                "Please first upload a file and then click "
+                'the button "submit for recognition"',
+                "result_item_error",
+            ),
+            "",
+            "",
         )
 
     logging.info(f"Processing uploaded file: {in_filename}")
