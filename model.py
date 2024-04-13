@@ -169,6 +169,21 @@ def _get_russian_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognize
 
 
 @lru_cache(maxsize=2)
+def get_punct_model() -> sherpa_onnx.OfflinePunctuation:
+    model = _get_nn_model_filename(
+        repo_id="csukuangfj/sherpa-onnx-punct-ct-transformer-zh-en-vocab272727-2024-04-12",
+        filename="model.onnx",
+        subfolder=".",
+    )
+    config = sherpa_onnx.OfflinePunctuationConfig(
+        model=sherpa_onnx.OfflinePunctuationModelConfig(ct_transformer=model),
+    )
+
+    punct = sherpa_onnx.OfflinePunctuation(config)
+    return punct
+
+
+@lru_cache(maxsize=2)
 def get_vad() -> sherpa_onnx.VoiceActivityDetector:
     vad_model = _get_nn_model_filename(
         repo_id="csukuangfj/vad",

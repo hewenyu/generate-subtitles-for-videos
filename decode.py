@@ -48,6 +48,7 @@ class Segment:
 def decode(
     recognizer: sherpa_onnx.OfflineRecognizer,
     vad: sherpa_onnx.VoiceActivityDetector,
+    punct: Optional[sherpa_onnx.OfflinePunctuation],
     filename: str,
 ) -> str:
     ffmpeg_cmd = [
@@ -114,6 +115,8 @@ def decode(
 
         for seg, stream in zip(segments, streams):
             seg.text = stream.result.text.strip()
+            if punct is not None:
+                seg.text = punct.add_punctuation(seg.text)
             segment_list.append(seg)
 
     return "\n\n".join(f"{i}\n{seg}" for i, seg in enumerate(segment_list, 1))

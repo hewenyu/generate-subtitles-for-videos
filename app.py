@@ -26,7 +26,7 @@ from pathlib import Path
 import gradio as gr
 
 from decode import decode
-from model import get_pretrained_model, get_vad, language_to_models
+from model import get_pretrained_model, get_vad, language_to_models, get_punct_model
 
 title = "# Next-gen Kaldi: Generate subtitles for videos"
 
@@ -89,6 +89,7 @@ def show_file_info(in_filename: str):
 def process_uploaded_video_file(
     language: str,
     repo_id: str,
+    add_punctuation: str,
     in_filename: str,
 ):
     if in_filename is None or in_filename == "":
@@ -105,13 +106,14 @@ def process_uploaded_video_file(
 
     logging.info(f"Processing uploaded file: {in_filename}")
 
-    ans = process(language, repo_id, in_filename)
+    ans = process(language, repo_id, add_punctuation, in_filename)
     return (in_filename, ans[0]), ans[0], ans[1], ans[2]
 
 
 def process_uploaded_audio_file(
     language: str,
     repo_id: str,
+    add_punctuation: str,
     in_filename: str,
 ):
     if in_filename is None or in_filename == "":
@@ -131,11 +133,15 @@ def process_uploaded_audio_file(
     return process(language, repo_id, in_filename)
 
 
-def process(language: str, repo_id: str, in_filename: str):
+def process(language: str, repo_id: str, add_punctuation: str, in_filename: str):
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
+    if add_punctuation == "Yes":
+        punct = get_punct_model()
+    else:
+        punct = None
 
-    result = decode(recognizer, vad, in_filename)
+    result = decode(recognizer, vad, punct, in_filename)
     logging.info(result)
 
     srt_filename = Path(in_filename).with_suffix(".srt")
@@ -175,6 +181,11 @@ with demo:
         update_model_dropdown,
         inputs=language_radio,
         outputs=model_dropdown,
+    )
+    punct_radio = gr.Radio(
+        label="Whether to add punctuation",
+        choices=["Yes", "No"],
+        value="Yes",
     )
 
     with gr.Tabs():
@@ -218,6 +229,7 @@ with demo:
             inputs=[
                 language_radio,
                 model_dropdown,
+                punct_radio,
                 uploaded_video_file,
             ],
             outputs=[
@@ -233,6 +245,7 @@ with demo:
             inputs=[
                 language_radio,
                 model_dropdown,
+                punct_radio,
                 uploaded_audio_file,
             ],
             outputs=[
