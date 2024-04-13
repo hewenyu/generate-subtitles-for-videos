@@ -128,7 +128,7 @@ def decode(
                 seg.text = punct.add_punctuation(seg.text)
             segment_list.append(seg)
     logging.info(f"all text: {all_text}")
-    all_text = " ".join(all_text)
+    all_text = "".join(all_text)
     logging.info(f"all text: {all_text}")
     if punct is not None:
         all_text = punct.add_punctuation(all_text)
