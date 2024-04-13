@@ -118,7 +118,7 @@ def decode(
 
         for seg, stream in zip(segments, streams):
             seg.text = stream.result.text.strip()
-            if not all_text:
+            if len(all_text) == 0:
                 all_text.append(seg.text)
             elif len(all_text[-1][0].encode()) == 1 and len(seg.text[0].encode()) == 1:
                 all_text.append(" ")
@@ -127,7 +127,9 @@ def decode(
             if punct is not None:
                 seg.text = punct.add_punctuation(seg.text)
             segment_list.append(seg)
+    logging.info("all text: {all_text}")
     all_text = " ".join(all_text)
+    logging.info("all text: {all_text}")
     if punct is not None:
         all_text = punct.add_punctuation(all_text)
 
