@@ -123,6 +123,8 @@ def decode(
             elif len(all_text[-1][0].encode()) == 1 and len(seg.text[0].encode()) == 1:
                 all_text.append(" ")
                 all_text.append(seg.text)
+            else:
+                all_text.append(seg.text)
 
             if punct is not None:
                 seg.text = punct.add_punctuation(seg.text)
