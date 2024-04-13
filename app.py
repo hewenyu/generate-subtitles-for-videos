@@ -134,6 +134,7 @@ def process_uploaded_audio_file(
 
 
 def process(language: str, repo_id: str, add_punctuation: str, in_filename: str):
+    logging.info(f"add_punctuation: {add_punctuation}")
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
     if add_punctuation == "Yes":
