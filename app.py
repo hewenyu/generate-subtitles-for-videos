@@ -130,7 +130,7 @@ def process_uploaded_audio_file(
 
     logging.info(f"Processing uploaded file: {in_filename}")
 
-    return process(language, repo_id, in_filename)
+    return process(language, repo_id, add_punctuation, in_filename)
 
 
 def process(language: str, repo_id: str, add_punctuation: str, in_filename: str):
