@@ -183,7 +183,6 @@ def get_punct_model() -> sherpa_onnx.OfflinePunctuation:
     return punct
 
 
-@lru_cache(maxsize=2)
 def get_vad() -> sherpa_onnx.VoiceActivityDetector:
     vad_model = _get_nn_model_filename(
         repo_id="csukuangfj/vad",
