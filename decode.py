@@ -81,6 +81,8 @@ def decode(
 
     logging.info("Started!")
 
+    all_text = []
+
     while True:
         # *2 because int16_t has two bytes
         data = process.stdout.read(frames_per_read * 2)
@@ -116,8 +118,17 @@ def decode(
 
         for seg, stream in zip(segments, streams):
             seg.text = stream.result.text.strip()
+            if not all_text:
+                all_text.append(seg.text)
+            elif len(all_text[-1][0].encode()) == 1 and len(seg.text[0].encode()) == 1:
+                all_text.append(" ")
+                all_text.append(seg.text)
+
             if punct is not None:
                 seg.text = punct.add_punctuation(seg.text)
             segment_list.append(seg)
+    all_text = " ".join(all_text)
+    if punct is not None:
+        all_text = punct.add_punctuation(all_text)
 
-    return "\n\n".join(f"{i}\n{seg}" for i, seg in enumerate(segment_list, 1))
+    return "\n\n".join(f"{i}\n{seg}" for i, seg in enumerate(segment_list, 1)), all_text

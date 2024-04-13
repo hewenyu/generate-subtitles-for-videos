@@ -106,8 +106,8 @@ def process_uploaded_video_file(
 
     logging.info(f"Processing uploaded file: {in_filename}")
 
-    ans = process(language, repo_id, add_punctuation, in_filename)
-    return (in_filename, ans[0]), ans[0], ans[1], ans[2]
+    ans, all_text = process(language, repo_id, add_punctuation, in_filename)
+    return (in_filename, ans[0]), ans[0], ans[1], ans[2], all_text
 
 
 def process_uploaded_audio_file(
@@ -142,8 +142,9 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
     else:
         punct = None
 
-    result = decode(recognizer, vad, punct, in_filename)
+    result, all_text = decode(recognizer, vad, punct, in_filename)
     logging.info(result)
+    logging.info(all_text)
 
     srt_filename = Path(in_filename).with_suffix(".srt")
     with open(srt_filename, "w", encoding="utf-8") as f:
@@ -156,6 +157,7 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
         str(srt_filename),
         build_html_output("Done! Please download the SRT file", "result_item_success"),
         result,
+        all_text,
     )
 
 
@@ -205,7 +207,10 @@ with demo:
 
             output_info_video = gr.HTML(label="Info")
             output_textbox_video = gr.Textbox(
-                label="Recognized speech from uploaded video file"
+                label="Recognized speech from uploaded video file (srt format)"
+            )
+            all_output_textbox_video = gr.Textbox(
+                label="Recognized speech from uploaded video file (all in one)"
             )
 
         with gr.TabItem("Upload audio from disk"):
@@ -222,7 +227,10 @@ with demo:
 
             output_info_audio = gr.HTML(label="Info")
             output_textbox_audio = gr.Textbox(
-                label="Recognized speech from uploaded audio file"
+                label="Recognized speech from uploaded audio file (srt format)"
+            )
+            all_output_textbox_audio = gr.Textbox(
+                label="Recognized speech from uploaded audio file (all in one)"
             )
 
         upload_video_button.click(
@@ -238,6 +246,7 @@ with demo:
                 output_srt_file_video,
                 output_info_video,
                 output_textbox_video,
+                all_output_textbox_video,
             ],
         )
 
@@ -253,6 +262,7 @@ with demo:
                 output_srt_file_audio,
                 output_info_audio,
                 output_textbox_audio,
+                all_output_textbox_audio,
             ],
         )
 
