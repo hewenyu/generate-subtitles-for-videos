@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import subprocess
 from dataclasses import dataclass
 from datetime import timedelta
-import logging
+from typing import Optional
 
 import numpy as np
 import sherpa_onnx
