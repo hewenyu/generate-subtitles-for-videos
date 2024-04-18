@@ -90,6 +90,7 @@ def _get_whisper_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
         decoder=decoder,
         tokens=tokens,
         num_threads=2,
+        tail_paddings=2000,
     )
 
     return recognizer
