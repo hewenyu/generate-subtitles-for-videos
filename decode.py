@@ -118,6 +118,10 @@ def decode(
 
         for seg, stream in zip(segments, streams):
             seg.text = stream.result.text.strip()
+            if len(seg.text) == 0:
+                logging.info("Skip empty segment")
+                continue
+
             if len(all_text) == 0:
                 all_text.append(seg.text)
             elif len(all_text[-1][0].encode()) == 1 and len(seg.text[0].encode()) == 1:
