@@ -104,7 +104,7 @@ def process_uploaded_video_file(
             "",
         )
 
-    logging.info(f"Processing uploaded file: {in_filename}")
+    logging.info(f"Processing uploaded video file: {in_filename}")
 
     ans = process(language, repo_id, add_punctuation, in_filename)
     return (in_filename, ans[0]), ans[0], ans[1], ans[2], ans[3]
@@ -128,7 +128,7 @@ def process_uploaded_audio_file(
             "",
         )
 
-    logging.info(f"Processing uploaded file: {in_filename}")
+    logging.info(f"Processing uploaded audio file: {in_filename}")
 
     return process(language, repo_id, add_punctuation, in_filename)
 
