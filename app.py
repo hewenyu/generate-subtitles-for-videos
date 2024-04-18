@@ -106,8 +106,8 @@ def process_uploaded_video_file(
 
     logging.info(f"Processing uploaded file: {in_filename}")
 
-    ans, all_text = process(language, repo_id, add_punctuation, in_filename)
-    return (in_filename, ans[0]), ans[0], ans[1], ans[2], all_text
+    ans = process(language, repo_id, add_punctuation, in_filename)
+    return (in_filename, ans[0]), ans[0], ans[1], ans[2], ans[3]
 
 
 def process_uploaded_audio_file(
@@ -137,6 +137,10 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
     logging.info(f"add_punctuation: {add_punctuation}")
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
+
+    if "whisper" in repo_id:
+        add_punctuation = "No"
+
     if add_punctuation == "Yes":
         punct = get_punct_model()
     else:
@@ -144,7 +148,6 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
 
     result, all_text = decode(recognizer, vad, punct, in_filename)
     logging.info(result)
-    logging.info(all_text)
 
     srt_filename = Path(in_filename).with_suffix(".srt")
     with open(srt_filename, "w", encoding="utf-8") as f:
