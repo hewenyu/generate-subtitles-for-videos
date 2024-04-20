@@ -154,6 +154,7 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
         f.write(result)
 
     show_file_info(in_filename)
+    logging.info(f"all_text:\n{all_text}")
     logging.info("Done")
 
     return (
