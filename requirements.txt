@@ -1,3 +1,4 @@
 
-sherpa-onnx>=1.9.21
+# sherpa-onnx>=1.9.21
 ffmpeg-python
+https://huggingface.co/csukuangfj/sherpa-onnx-wheels/resolve/main/sherpa_onnx-1.9.26-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl

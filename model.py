@@ -123,6 +123,31 @@ def _get_paraformer_zh_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRec
     return recognizer
 
 
+@lru_cache(maxsize=5)
+def _get_chinese_dialect_models(
+    repo_id: str, decoding_method: str, num_active_paths: int
+) -> sherpa_onnx.OfflineRecognizer:
+    assert repo_id in [
+        "csukuangfj/sherpa-onnx-telespeech-ctc-int8-zh-2024-06-04",
+    ], repo_id
+
+    nn_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="model.int8.onnx",
+        subfolder=".",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder=".")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_telespeech_ctc(
+        model=nn_model,
+        tokens=tokens,
+        num_threads=2,
+    )
+
+    return recognizer
+
+
 @lru_cache(maxsize=10)
 def _get_russian_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     assert repo_id in (
@@ -209,6 +234,8 @@ def get_vad() -> sherpa_onnx.VoiceActivityDetector:
 def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     if repo_id in chinese_models:
         return chinese_models[repo_id](repo_id)
+    elif repo_id in chinese_dialect_models:
+        return chinese_dialect_models[repo_id](repo_id)
     elif repo_id in english_models:
         return english_models[repo_id](repo_id)
     elif repo_id in chinese_english_mixed_models:
@@ -335,6 +362,10 @@ def _get_english_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     return recognizer
 
 
+chinese_dialect_models = {
+    "csukuangfj/sherpa-onnx-telespeech-ctc-int8-zh-2024-06-04": _get_chinese_dialect_models,
+}
+
 chinese_models = {
     "csukuangfj/sherpa-onnx-paraformer-zh-2023-03-28": _get_paraformer_zh_pre_trained_model,
     "csukuangfj/sherpa-onnx-conformer-zh-stateless2-2023-05-23": _get_wenetspeech_pre_trained_model,  # noqa
@@ -361,6 +392,7 @@ russian_models = {
 }
 
 language_to_models = {
+    "超多种中文方言": list(chinese_dialect_models.keys()),
     "Chinese+English": list(chinese_english_mixed_models.keys()),
     "Chinese": list(chinese_models.keys()),
     "English": list(english_models.keys()),
