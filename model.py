@@ -124,9 +124,7 @@ def _get_paraformer_zh_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRec
 
 
 @lru_cache(maxsize=5)
-def _get_chinese_dialect_models(
-    repo_id: str, decoding_method: str, num_active_paths: int
-) -> sherpa_onnx.OfflineRecognizer:
+def _get_chinese_dialect_models(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     assert repo_id in [
         "csukuangfj/sherpa-onnx-telespeech-ctc-int8-zh-2024-06-04",
     ], repo_id
