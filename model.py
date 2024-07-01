@@ -242,6 +242,8 @@ def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
         return russian_models[repo_id](repo_id)
     elif repo_id in korean_models:
         return korean_models[repo_id](repo_id)
+    elif repo_id in thai_models:
+        return thai_models[repo_id](repo_id)
     else:
         raise ValueError(f"Unsupported repo_id: {repo_id}")
 
@@ -399,6 +401,45 @@ def _get_korean_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer
     return recognizer
 
 
+@lru_cache(maxsize=10)
+def _get_yifan_thai_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
+    assert repo_id in (
+        "yfyeung/icefall-asr-gigaspeech2-th-zipformer-2024-06-20",
+    ), repo_id
+
+    encoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="encoder-epoch-12-avg-5.int8.onnx",
+        subfolder="exp",
+    )
+
+    decoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="decoder-epoch-12-avg-5.onnx",
+        subfolder="exp",
+    )
+
+    joiner_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="joiner-epoch-12-avg-5.int8.onnx",
+        subfolder="exp",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder="data/lang_bpe_2000")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+        tokens=tokens,
+        encoder=encoder_model,
+        decoder=decoder_model,
+        joiner=joiner_model,
+        num_threads=2,
+        sample_rate=16000,
+        feature_dim=80,
+    )
+
+    return recognizer
+
+
 chinese_dialect_models = {
     "csukuangfj/sherpa-onnx-telespeech-ctc-int8-zh-2024-06-04": _get_chinese_dialect_models,
 }
@@ -432,6 +473,10 @@ russian_models = {
     "alphacep/vosk-model-small-ru": _get_russian_pre_trained_model,
 }
 
+thai_models = {
+    "yfyeung/icefall-asr-gigaspeech2-th-zipformer-2024-06-20": _get_yifan_thai_pretrained_model,
+}
+
 language_to_models = {
     "超多种中文方言": list(chinese_dialect_models.keys()),
     "Chinese+English": list(chinese_english_mixed_models.keys()),
@@ -439,4 +484,5 @@ language_to_models = {
     "English": list(english_models.keys()),
     "Russian": list(russian_models.keys()),
     "Korean": list(korean_models.keys()),
+    "Thai": list(thai_models.keys()),
 }

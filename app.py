@@ -138,7 +138,12 @@ def process(language: str, repo_id: str, add_punctuation: str, in_filename: str)
     recognizer = get_pretrained_model(repo_id)
     vad = get_vad()
 
-    if "whisper" in repo_id or "korean" in repo_id or "vosk-model" in repo_id:
+    if (
+        "whisper" in repo_id
+        or "korean" in repo_id
+        or "vosk-model" in repo_id
+        or "asr-gigaspeech2-th-zipformer" in repo_id
+    ):
         add_punctuation = "No"
 
     if add_punctuation == "Yes":
