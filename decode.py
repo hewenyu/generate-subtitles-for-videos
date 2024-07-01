@@ -83,11 +83,16 @@ def decode(
 
     all_text = []
 
+    is_last = False
+
     while True:
         # *2 because int16_t has two bytes
         data = process.stdout.read(frames_per_read * 2)
         if not data:
-            break
+            if is_last:
+                break
+            is_last = True
+            data = np.zeros(sample_rate, dtype=np.int16)
 
         samples = np.frombuffer(data, dtype=np.int16)
         samples = samples.astype(np.float32) / 32768
