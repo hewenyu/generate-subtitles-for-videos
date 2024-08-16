@@ -244,6 +244,10 @@ def get_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
         return korean_models[repo_id](repo_id)
     elif repo_id in thai_models:
         return thai_models[repo_id](repo_id)
+    elif repo_id in japanese_models:
+        return japanese_models[repo_id](repo_id)
+    elif repo_id in zh_en_ko_ja_yue_models:
+        return zh_en_ko_ja_yue_models[repo_id](repo_id)
     else:
         raise ValueError(f"Unsupported repo_id: {repo_id}")
 
@@ -402,6 +406,43 @@ def _get_korean_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer
 
 
 @lru_cache(maxsize=10)
+def _get_japanese_pre_trained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
+    assert repo_id in ("reazon-research/reazonspeech-k2-v2",), repo_id
+
+    encoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="encoder-epoch-99-avg-1.int8.onnx",
+        subfolder=".",
+    )
+
+    decoder_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="decoder-epoch-99-avg-1.onnx",
+        subfolder=".",
+    )
+
+    joiner_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="joiner-epoch-99-avg-1.onnx",
+        subfolder=".",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder=".")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+        tokens=tokens,
+        encoder=encoder_model,
+        decoder=decoder_model,
+        joiner=joiner_model,
+        num_threads=2,
+        sample_rate=16000,
+        feature_dim=80,
+    )
+
+    return recognizer
+
+
+@lru_cache(maxsize=10)
 def _get_yifan_thai_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecognizer:
     assert repo_id in (
         "yfyeung/icefall-asr-gigaspeech2-th-zipformer-2024-06-20",
@@ -440,8 +481,44 @@ def _get_yifan_thai_pretrained_model(repo_id: str) -> sherpa_onnx.OfflineRecogni
     return recognizer
 
 
+@lru_cache(maxsize=10)
+def _get_sense_voice_pre_trained_model(
+    repo_id: str,
+    decoding_method: str,
+    num_active_paths: int,
+) -> sherpa_onnx.OfflineRecognizer:
+    assert repo_id in [
+        "csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17",
+    ], repo_id
+
+    nn_model = _get_nn_model_filename(
+        repo_id=repo_id,
+        filename="model.int8.onnx",
+        subfolder=".",
+    )
+
+    tokens = _get_token_filename(repo_id=repo_id, subfolder=".")
+
+    recognizer = sherpa_onnx.OfflineRecognizer.from_sense_voice(
+        model=nn_model,
+        tokens=tokens,
+        num_threads=2,
+        sample_rate=sample_rate,
+        feature_dim=80,
+        decoding_method="greedy_search",
+        debug=True,
+        use_itn=True,
+    )
+
+    return recognizer
+
+
 chinese_dialect_models = {
     "csukuangfj/sherpa-onnx-telespeech-ctc-int8-zh-2024-06-04": _get_chinese_dialect_models,
+}
+
+zh_en_ko_ja_yue_models = {
+    "csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17": _get_sense_voice_pre_trained_model,
 }
 
 chinese_models = {
@@ -477,12 +554,20 @@ thai_models = {
     "yfyeung/icefall-asr-gigaspeech2-th-zipformer-2024-06-20": _get_yifan_thai_pretrained_model,
 }
 
+japanese_models = {
+    "reazon-research/reazonspeech-k2-v2": _get_japanese_pre_trained_model
+}
+
 language_to_models = {
     "超多种中文方言": list(chinese_dialect_models.keys()),
     "Chinese+English": list(chinese_english_mixed_models.keys()),
+    "Chinese+English+Korean+Japanese+Cantoes(中英韩日粤语)": list(
+        zh_en_ko_ja_yue_models.keys()
+    ),
     "Chinese": list(chinese_models.keys()),
     "English": list(english_models.keys()),
     "Russian": list(russian_models.keys()),
     "Korean": list(korean_models.keys()),
     "Thai": list(thai_models.keys()),
+    "Japanese": list(japanese_models.keys()),
 }
