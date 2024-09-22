@@ -15,7 +15,7 @@
 # limitations under the License.
 
 from functools import lru_cache
-
+import logging
 import sherpa_onnx
 from huggingface_hub import hf_hub_download
 
@@ -31,7 +31,9 @@ def _get_nn_model_filename(
         repo_id=repo_id,
         filename=filename,
         subfolder=subfolder,
+        local_dir=f"./models/{repo_id}/{filename}/{subfolder}",
     )
+    logging.info(f"Downloaded: {repo_id}/{filename}/{subfolder}")
     return nn_model_filename
 
 
