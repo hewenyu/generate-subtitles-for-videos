@@ -18,3 +18,11 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
 ```
 sudo apt-get install ffmpeg
 ```
+
+
+```
+pip install nuitka
+sudo apt-get install ffmpeg patchelf
+
+nuitka --standalone --onefile --output-dir=dist app.py
+```
