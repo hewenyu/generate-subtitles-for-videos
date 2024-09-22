@@ -35,13 +35,13 @@ jobs:
         id: build
         run: |
           ls build/
-          zip -r app-linux.zip build/app.bin
+          zip -r app-linux.zip build/app.bin  
 
       - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
           name: artifact
-          path: translate-linux.zip
+          path: app-linux.zip
 
 
   macOS-latest:
@@ -117,7 +117,7 @@ jobs:
         id: build
         run: |
           ls build/
-          Compress-Archive -Path ./build -DestinationPath app-${{ matrix.arch }}.zip
+          Compress-Archive -Path ./build/app.exe -DestinationPath app-${{ matrix.arch }}.zip
 
       - name: Upload binaries
         uses: actions/upload-artifact@v3
