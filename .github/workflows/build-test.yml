@@ -1,0 +1,50 @@
+name: CI-test
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+
+  build:
+    # Windows is currently the only platform this action supports
+    # need ffmpeg to be installed
+    runs-on: windows-latest
+
+    steps:
+
+      # Check-out repository
+      - uses: actions/checkout@v4
+
+      # Setup Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      # Install Python dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # setup-ffmpeg
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
+        with:
+          # A specific version to download, may also be "release" or a specific version
+          # like "6.1.0". At the moment semver specifiers (i.e. >=6.1.0) are supported
+          # only on Windows, on other platforms they are allowed but version is matched
+          # exactly regardless.
+          ffmpeg-version: release
+          # Target architecture of the ffmpeg executable to install. Defaults to the
+          # system architecture. Only x64 and arm64 are supported (arm64 only on Linux).
+          architecture: ''
+          # Linking type of the binaries. Use "shared" to download shared binaries and 
+          # "static" for statically linked ones. Shared builds are currently only available
+          # for windows releases. Defaults to "static"
+          linking-type: static
+
+      # Install Python dependencies
+      - name: echo ffmpeg
+        run: echo ${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}
