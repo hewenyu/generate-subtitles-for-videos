@@ -24,11 +24,15 @@ jobs:
           python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
 
-      # Install ffmpeg
-      - name: Install ffmpeg
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          toolset: 'ffmpeg'
+      # Install Python dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # # Install ffmpeg
+      # - name: Install ffmpeg
+      #   uses: ilammy/msvc-dev-cmd@v1
+      #   with:
+      #     toolset: 'ffmpeg'
 
       # Build python script into a stand-alone exe
       - uses: Nuitka/Nuitka-Action@main
